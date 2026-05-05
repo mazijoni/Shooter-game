@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/PauseMenu.gd" id="1_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Settings.tscn" id="2_settings"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_pause")
+
+[node name="Bg" type="Control" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Overlay" type="ColorRect" parent="Bg"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.75)
+
+[node name="PausePanel" type="Control" parent="Bg"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Center" type="CenterContainer" parent="Bg/PausePanel"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="Bg/PausePanel/Center"]
+layout_mode = 2
+custom_minimum_size = Vector2(320, 0)
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Bg/PausePanel/Center/VBox"]
+layout_mode = 2
+text = "PAUSED"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 36
+
+[node name="Spacer" type="Control" parent="Bg/PausePanel/Center/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+
+[node name="ResumeButton" type="Button" parent="Bg/PausePanel/Center/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "RESUME"
+theme_override_font_sizes/font_size = 18
+
+[node name="SettingsButton" type="Button" parent="Bg/PausePanel/Center/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "SETTINGS"
+theme_override_font_sizes/font_size = 18
+
+[node name="MainMenuButton" type="Button" parent="Bg/PausePanel/Center/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "MAIN MENU"
+theme_override_font_sizes/font_size = 18
+
+[node name="SettingsPanel" parent="Bg" instance=ExtResource("2_settings")]
+visible = false
+
+[connection signal="pressed" from="Bg/PausePanel/Center/VBox/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Bg/PausePanel/Center/VBox/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Bg/PausePanel/Center/VBox/MainMenuButton" to="." method="_on_main_menu_pressed"]
+[connection signal="back_pressed" from="Bg/SettingsPanel" to="." method="_on_settings_back"]

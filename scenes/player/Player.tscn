@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/player/Player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pausemenu"]
+
+[sub_resource type="CapsuleShape3D" id="Stand"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="CapsuleShape3D" id="Slide"]
+radius = 0.35
+height = 0.75
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_player")
+
+[node name="StandShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("Stand")
+
+[node name="SlideShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
+shape = SubResource("Slide")
+disabled = true
+
+[node name="CameraArm" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraArm"]
+
+[node name="WallLeft" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+target_position = Vector3(-0.6, 0, 0)
+
+[node name="WallRight" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+target_position = Vector3(0.6, 0, 0)
+
+[node name="PauseMenu" parent="." instance=ExtResource("2_pausemenu")]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="SlowmoBar" type="ProgressBar" parent="HUD"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = -20.0
+min_value = 0.0
+max_value = 1.0
+value = 1.0
+show_percentage = false
