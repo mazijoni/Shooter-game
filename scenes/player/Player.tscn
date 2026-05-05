@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://dghf1jkeiawei"]
 
-[ext_resource type="Script" path="res://src/player/Player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://dklkq7yky36af" path="res://src/player/Player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pausemenu"]
+[ext_resource type="Shader" uid="uid://donx13aens55l" path="res://assets/shaders/jpeg.gdshader" id="3_4kuee"]
+[ext_resource type="Shader" uid="uid://crjsrx2fy3kpx" path="res://assets/shaders/speed_lines.gdshader" id="4_sl"]
 
 [sub_resource type="CapsuleShape3D" id="Stand"]
 radius = 0.35
@@ -11,36 +13,69 @@ height = 1.8
 radius = 0.35
 height = 0.75
 
-[node name="Player" type="CharacterBody3D"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_524rm"]
+shader = ExtResource("3_4kuee")
+shader_parameter/quality = 8
+shader_parameter/block_size = 8
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_524rm"]
+frequency = 0.053
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tpg5x"]
+noise = SubResource("FastNoiseLite_524rm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sl"]
+shader = ExtResource("4_sl")
+shader_parameter/noise = SubResource("NoiseTexture2D_tpg5x")
+shader_parameter/line_count = 2.0
+shader_parameter/distortion_power = 0.034
+shader_parameter/line_falloff = 1.0
+shader_parameter/mask_size = 0.175
+shader_parameter/mask_edge = 0.195
+shader_parameter/animation_speed = 17.1850007687875
+shader_parameter/blur_strength = 0.01
+shader_parameter/effect_power = 0.5
+
+[node name="Player" type="CharacterBody3D" unique_id=1756139809]
 script = ExtResource("1_player")
 
-[node name="StandShape" type="CollisionShape3D" parent="."]
+[node name="StandShape" type="CollisionShape3D" parent="." unique_id=2045767294]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("Stand")
 
-[node name="SlideShape" type="CollisionShape3D" parent="."]
+[node name="SlideShape" type="CollisionShape3D" parent="." unique_id=2066217532]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 shape = SubResource("Slide")
 disabled = true
 
-[node name="CameraArm" type="Node3D" parent="."]
+[node name="CameraArm" type="Node3D" parent="." unique_id=45717628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
-[node name="Camera3D" type="Camera3D" parent="CameraArm"]
+[node name="Camera3D" type="Camera3D" parent="CameraArm" unique_id=2088048540]
 
-[node name="WallLeft" type="RayCast3D" parent="."]
+[node name="WallLeft" type="RayCast3D" parent="." unique_id=913060536]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 target_position = Vector3(-0.6, 0, 0)
 
-[node name="WallRight" type="RayCast3D" parent="."]
+[node name="WallRight" type="RayCast3D" parent="." unique_id=202174826]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 target_position = Vector3(0.6, 0, 0)
 
-[node name="PauseMenu" parent="." instance=ExtResource("2_pausemenu")]
+[node name="PauseMenu" parent="." unique_id=783233423 instance=ExtResource("2_pausemenu")]
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1069826978]
+layer = 3
 
-[node name="SlowmoBar" type="ProgressBar" parent="HUD"]
+[node name="jpeg" type="ColorRect" parent="HUD" unique_id=902154848]
+material = SubResource("ShaderMaterial_524rm")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SlowmoBar" type="ProgressBar" parent="HUD" unique_id=1043563111]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -50,7 +85,18 @@ offset_left = -220.0
 offset_top = -40.0
 offset_right = -20.0
 offset_bottom = -20.0
-min_value = 0.0
 max_value = 1.0
 value = 1.0
 show_percentage = false
+
+[node name="SpeedLinesLayer" type="CanvasLayer" parent="." unique_id=314159265]
+layer = 2
+
+[node name="SpeedLines" type="ColorRect" parent="SpeedLinesLayer" unique_id=112358132]
+material = SubResource("ShaderMaterial_sl")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

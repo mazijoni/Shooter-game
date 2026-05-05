@@ -22,6 +22,12 @@ const SLIDE_FRICTION    := 6.0
 const SLIDE_DURATION    := 0.75
 const SLIDE_COOLDOWN    := 0.55
 
+# ── Sprint Effect ─────────────────────────────────────────────────────────────
+const SPRINT_FX_FADE_IN   := 6.0    # effect_power lerp-in speed
+const SPRINT_FX_FADE_OUT  := 10.0   # effect_power lerp-out speed
+const SPRINT_FX_ANIM_FULL := 20.0   # animation_speed when not in slow-mo
+const SPRINT_FX_ANIM_SLOW := 4.0    # animation_speed when in slow-mo
+
 # ── Slow-mo ───────────────────────────────────────────────────────────────────
 const SLOWMO_SCALE          := 0.25
 const SLOWMO_MAX_STAMINA    := 5.0
@@ -46,6 +52,7 @@ const SLIDE_CAM_Y       := 0.65
 @onready var ray_left     : RayCast3D        = $WallLeft
 @onready var ray_right    : RayCast3D        = $WallRight
 @onready var slowmo_bar   : ProgressBar      = $HUD/SlowmoBar
+@onready var _speed_lines : ColorRect        = $SpeedLinesLayer/SpeedLines
 
 var _gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -80,6 +87,7 @@ func _process(delta: float) -> void:
 	_apply_look(delta)
 	_smooth_camera(delta)
 	_tilt_camera(delta)
+	_update_sprint_fx(_real(delta))
 
 
 func _apply_look(delta: float) -> void:
@@ -294,3 +302,16 @@ func _tick_timers(rd: float) -> void:
 ## Returns real-world delta regardless of Engine.time_scale.
 func _real(delta: float) -> float:
 	return delta / Engine.time_scale if Engine.time_scale > 0.0 else delta
+
+
+# ── Sprint Effect ─────────────────────────────────────────────────────────────
+
+func _update_sprint_fx(rd: float) -> void:
+	var mat := _speed_lines.material as ShaderMaterial
+	var moving  := Vector2(velocity.x, velocity.z).length() > 3.0
+	var target  := 1.0 if (_sprinting and moving) else 0.0
+	var current := mat.get_shader_parameter("effect_power") as float
+	var speed   := SPRINT_FX_FADE_IN if target > current else SPRINT_FX_FADE_OUT
+	mat.set_shader_parameter("effect_power", move_toward(current, target, speed * rd))
+	mat.set_shader_parameter("animation_speed",
+			SPRINT_FX_ANIM_SLOW if _slowmo else SPRINT_FX_ANIM_FULL)
